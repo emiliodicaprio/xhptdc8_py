@@ -1,0 +1,69 @@
+manager_config:
+ device_configs:
+  0:                                  # configuration for the first device
+   auto_trigger_period : 200
+   auto_trigger_random_exponent : 20
+   trigger_threshold :
+    0: -0.3499
+    1: -0.35
+   trigger :
+    0:
+     falling : true
+     rising : false
+    1:
+     falling : true
+     rising : false
+   gating_block :
+    0:
+     mode : 0
+     negate : true
+     retrigger : true
+     extend : true
+     start : 10
+     stop : 190
+     sources : 1
+   tiger_block :
+    0:
+     mode : 0
+     negate : true
+     retrigger : true
+     extend : true
+     start : 20
+     stop : 200
+     sources : 2
+   channel :
+    0:
+     enable : true
+     rising : false
+    1:
+     enable : true
+     rising : false
+   adc_channel :
+    enable : true
+    watchdog_readout : false
+    watchdog_interval : 500
+    trigger_threshold : -0.35
+   skip_alignment : false
+   alignment_source : 1
+   alignment_off_state : 0
+
+ grouping :                           # grouping configuration
+  enabled : true
+  trigger_channel : 0
+  trigger_channel_bitmask : 0
+  range_start : 0
+  range_stop : 123456
+  trigger_deadtime : 1000
+  zero_channel : -1
+  zero_channel_offset : 0
+  window_hit_channels : -1
+  window_start : 10
+  window_stop : 20000
+  veto_mode : 0
+  veto_start : 30
+  veto_stop : 40
+  veto_active_channels : -1
+  veto_relative_to_zero : true
+  ignore_empty_events : false
+  overlap : false
+...                                   # end of configuration data

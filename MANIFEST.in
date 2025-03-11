@@ -1,0 +1,5 @@
+include cabouter/*.*
+include cabouter/tdc/*.*
+include xhptdc8_babel/bin/*.*
+include xhptdc8_babel/lib/*.*
+include xhptdc8_babel/include/*.*
