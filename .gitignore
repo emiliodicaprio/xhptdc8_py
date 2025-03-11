@@ -6,6 +6,7 @@ dist/
 wheels/
 *.egg-info
 *.pyd
+cabouter/cabouter/tdc/*.pyd
 
 
 # Virtual environments

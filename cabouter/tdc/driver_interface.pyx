@@ -10,7 +10,7 @@ cdef catch_errs(int status, const char *message):
     if status == XHPTDC8_OK:
         return status
     
-    printf("%s: %s\n", message, xhptdc8_get_last_error_message(0))
+    printf("TDC ERROR: %s: %s\n", message, xhptdc8_get_last_error_message(0))
     return
 
 cpdef initialize_tdc(int buffer_size):
