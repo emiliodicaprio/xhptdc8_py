@@ -167,6 +167,8 @@ cdef extern from "xhptdc8_interface.h":
     
     cdef int xhptdc8_get_default_configuration(xhptdc8_manager_configuration *mgr_config)
 
+    cdef int xhptdc8_get_current_configuration(xhptdc8_manager_configuration *mgr_config)
+
     cdef int xhptdc8_configure(xhptdc8_manager_configuration *mgr_config)
 
     cdef int xhptdc8_count_devices(int *error_code, const char **error_message)
