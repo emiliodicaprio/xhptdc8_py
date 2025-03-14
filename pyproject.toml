@@ -1,7 +1,7 @@
 [project]
-name = "cabouter"
+name = "xhptdc8_py"
 version = "0.1.0"
-description = "A tool for the CHEOPS Reaction Microscope"
+description = "Python bindings for the XHPTDC8 TDC driver"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [

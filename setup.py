@@ -6,18 +6,18 @@ import os
 
 extensions = [
     Extension(
-        "cabouter.tdc.driver_interface",
-        ["./cabouter/tdc/driver_interface.pyx"],
+        "xhptdc8_py.tdc",
+        ["./xhptdc8_py/tdc.pyx"],
         include_dirs=["xhptdc8_babel/include"],
         libraries=["xhptdc8_driver_64"],
         library_dirs=["xhptdc8_babel/lib"],
     ),
     Extension(
-        "cabouter.tdc.tdc_util",
-        ["./cabouter/tdc/tdc_util.pyx"],
+        "xhptdc8_py.util",
+        ["./xhptdc8_py/util.pyx"],
         include_dirs=[
             "xhptdc8_babel/include",
-            "./cabouter/tdc/tdc_util",
+            "./xhptdc8_py",
             "xhptdc8_babel/util/util/src/ryml_src",
         ],
         libraries=["xhptdc8_driver_64", "xhptdc8_util"],
@@ -25,15 +25,17 @@ extensions = [
     ),
 ]
 
-if not os.path.isdir("cabouter/cabouter/tdc"):
-    os.makedirs("cabouter/cabouter/tdc")
-shutil.copy("xhptdc8_babel/bin/xhptdc8_driver_64.dll", "cabouter/cabouter/tdc")
+if not os.path.isdir("xhptdc8_py/xhptdc8_py"):
+    os.makedirs("xhptdc8_py/xhptdc8_py")
+
+shutil.copy("xhptdc8_babel/bin/xhptdc8_driver_64.dll", "xhptdc8_py/xhptdc8_py")
+shutil.copy("xhptdc8_babel/bin/xhptdc8_util.dll", "xhptdc8_py/xhptdc8_py")
 
 setup(
-    name="cabouter",
-    ext_modules=cythonize(extensions, include_path=["./src"], build_dir="build"),
-    package_dir={"": "cabouter"},
-    include_dirs=["./cabouter", "./lib"],
+    name="xhptdc8_py",
+    ext_modules=cythonize(extensions, include_path=["./xhptdc8_py"], build_dir="build"),
+    package_dir={"": "xhptdc8_py"},
+    include_dirs=["./xhptdc8_py", "./lib"],
     cmdclass={"build_ext": build_ext},
     zip_safe=False,
     include_package_data=True,

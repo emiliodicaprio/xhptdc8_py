@@ -1,5 +1,6 @@
-include cabouter/*.*
-include cabouter/tdc/*.*
+include src/*.pyx
+include src/*.pxd
+include src/*.pxi
 include xhptdc8_babel/bin/*.*
 include xhptdc8_babel/lib/*.*
 include xhptdc8_babel/include/*.*
