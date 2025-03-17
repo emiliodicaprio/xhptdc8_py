@@ -293,6 +293,36 @@ def get_param_info(index: int) -> Param_info:
     cdef Param_info py_param_info = Param_info()
     cdef xhptdc8_param_info *param_info = &py_param_info.info
     py_error_wrapper(xhptdc8_get_param_info(index, param_info), "Could not get param info.")
+    return py_param_info
+
+cdef class Temperature_info:
+    """Structure containing temperature measurements.
+    The TDC temperature diode takes about 2.5us after wakeup from power down to privide a valid measurement.
+    Structure is filled by get_temperature_info().
+    """
+    cdef xhptdc8_temperature_info info
+
+    def __init__():
+        return
+    
+    @property
+    def version(self) -> int:
+        """Version number that is increased when the definition of the structure is changed."""
+        return self.info.version
+    
+    @property
+    def tdc(self) -> list[float]:
+        """Temperature for each of the TDC chips in degC."""
+        return self.info.tdc
+    
+def get_temperature_info(index: int):
+    """Gets temperature index from multiple sources on the board.
+    """
+    cdef Temperature_info py_temp_info = Temperature_info()
+    cdef xhptdc8_temperature_info *temp_info = &py_temp_info.info
+    py_error_wrapper(xhptdc8_get_temperature_info(index, temp_info), "Could not get temperature info")
+    return py_temp_info
+
 
 def close() -> None:
     """Finalize the driver for this device.
