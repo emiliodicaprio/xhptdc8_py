@@ -182,6 +182,68 @@ def get_static_info(index: int) -> None:
     py_error_wrapper(xhptdc8_get_static_info(index, static_info), "Could not get static info.")
     return py_static_info
 
+cdef class Fast_info:
+    """Structure containing fast dynamic information.
+    """
+    cdef xhptdc8_fast_info info
+
+    def __init__(self) -> None:
+        return
+    
+    @property
+    def version(self) -> int:
+        """A version number that is increased when the definition of the structure is changed.
+        """
+        return self.info.version
+
+    @property
+    def fpga_rpm(self) -> int:
+        """Speed of the FPGA fan in RPM. Returns 0 if no fan is present
+        """
+        return self.info.fpga_rpm
+
+    @property
+    def alerts(self) -> int:
+        """Alert bits from temperature sensor and the system monitor.
+
+        Bit 0 is set if the TDC temperature exceeds 140C. In this case the TDC shuts down and the device needs to be reinitialized.
+        """
+        return self.info.alerts
+
+    @property
+    def pcie_pwr_mgmt(self) -> int:
+        """Reports power management configuration of PCIe lanes. Should always be 0.
+        """
+        return self.info.pcie_pwr_mgmt
+
+    @property
+    def pcie_link_width(self) -> int:
+        """Number of PCIe lanes the card uses. Should always be 1 for the xHPTDC8-PCIe.
+        """
+        return self.info.pcie_link_width
+
+    @property
+    def pcie_max_payload(self) -> int:
+        """Maximum size for a single PCIe transaction in bytes. Depends on system configuration.
+        """
+        return self.info.pcie_max_payload
+
+    @property
+    def state(self) -> int:
+        """The current state of the device.
+        """
+        return self.info.state
+
+def get_fast_info(index: int) -> Fast_info:
+    """Returns fast dynamic info about the device
+
+    This call gets a structure that contains dynamic information that can be obtained within a few microseconds.
+    """
+    cdef Fast_info py_fast_info = Fast_info()
+    cdef xhptdc8_fast_info *fast_info = &py_fast_info.info
+    py_error_wrapper(xhptdc8_get_fast_info(index, fast_info), "Could not get fast info")
+    return py_fast_info
+
 def close() -> None:
     """Finalize the driver for this device.
     """
