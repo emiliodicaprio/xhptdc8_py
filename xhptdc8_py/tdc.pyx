@@ -244,6 +244,56 @@ def get_fast_info(index: int) -> Fast_info:
     py_error_wrapper(xhptdc8_get_fast_info(index, fast_info), "Could not get fast info")
     return py_fast_info
 
+cdef class Param_info:
+    """Structure that contains information that may change with configuration.
+
+    Structure is filled by get_param_info()
+    This structure contains information that changes indirectly due to configuration changes.
+    """
+    cdef xhptdc8_param_info info
+
+    def __init__(self) -> None:
+        return
+    
+    @property
+    def version(self) -> int:
+        """A version number that is increased when the definition of the structure is changed.
+        """
+        return self.info.version
+    @property
+    def binsize(self) -> float:
+        """Binsize (in ps) of the measured TDC data.
+
+        The TDC main clock runs at a frequency of 76.8 GHz, resulting in a binsize of ~13.0208 ps.
+        """
+        return self.info.binsize
+
+    @property
+    def channels(self) -> int:
+        """Number of TDC channels of the board. Currently fixed at 8.
+        """
+        return self.info.channels
+
+    @property
+    def channel_mask(self) -> int:
+        """Bit assignment of each enabled input channel. Bint 0 <= n < 8 is set if channel n is enabled."""
+        return self.info.channel_mask
+
+    @property
+    def total_buffer(self) -> int:
+        """The total amount of DMA buffer in bytes.
+        """
+        return self.info.total_buffer
+
+def get_param_info(index: int) -> Param_info:
+    """Returns information that may change with configuration
+
+    Gets a structure that contains information that changes indirectly due to configuration changes.
+    """
+    cdef Param_info py_param_info = Param_info()
+    cdef xhptdc8_param_info *param_info = &py_param_info.info
+    py_error_wrapper(xhptdc8_get_param_info(index, param_info), "Could not get param info.")
+
 def close() -> None:
     """Finalize the driver for this device.
     """
