@@ -25,11 +25,11 @@ extensions = [
     ),
 ]
 
-if not os.path.isdir("xhptdc8_py/xhptdc8_py"):
-    os.makedirs("xhptdc8_py/xhptdc8_py")
+if not os.path.isdir("xhptdc8_py"):
+    os.makedirs("xhptdc8_py")
 
-shutil.copy("xhptdc8_babel/bin/xhptdc8_driver_64.dll", "xhptdc8_py/xhptdc8_py")
-shutil.copy("xhptdc8_babel/bin/xhptdc8_util.dll", "xhptdc8_py/xhptdc8_py")
+shutil.copy("xhptdc8_babel/bin/xhptdc8_driver_64.dll", "xhptdc8_py")
+shutil.copy("xhptdc8_babel/bin/xhptdc8_util.dll", "xhptdc8_py")
 
 setup(
     name="xhptdc8_py",

@@ -6,6 +6,14 @@ from libc.stdio cimport printf
 cpdef py_print_error():
     return
 
+cdef int py_error_wrapper(int status, const char *message) except -1:
+    if status == XHPTDC8_OK:
+        return 0
+    else:
+        py_message = str(message, encoding="utf-8")
+        py_tdc_message = str(xhptdc8_get_last_error_message(0), encoding="utf-8")
+        raise RuntimeError(f"TDC error: {py_message}: {py_tdc_message}\n")
+
 cdef catch_errs(int status, const char *message):
     if status == XHPTDC8_OK:
         return status
@@ -30,7 +38,6 @@ cpdef initialize_tdc(int buffer_size):
     catch_errs(error_code, error_msg)
     return error_code
 
-# cdef xhptdc8_manager_configuration default_manager
 cpdef get_default_configuration():
     cdef xhptdc8_manager_configuration default_manager
 
@@ -41,16 +48,84 @@ cpdef get_default_configuration():
 
     return default_manager.grouping.enabled
 
-def start_capture():
-    catch_errs(xhptdc8_start_capture(), "could not start capture")
+def start_capture() -> None:
+    """Start data acquisition.
+    Device manager must be initialized.
+    """
+    py_error_wrapper(xhptdc8_start_capture(), "Could not start capture")
 
-def stop_capture():
-    catch_errs(xhptdc8_stop_capture(), "could not stop capture")
+def pause_capture() -> None:
+    """Pauses data acquisition. This does not allow for a change in configuration."""
+    py_error_wrapper(xhptdc8_pause_capture(), "Could not pause capture")
 
-def close_tdc():
-    catch_errs(xhptdc8_close(), "could not close manager")
+def continue_capture() -> None:
+    """Continues data acquisition. This does not allow for a change in configuration."""
+    py_error_wrapper(xhptdc8_continue_capture(), "Could not continue capture")
+
+def stop_capture() -> None:
+    """Stop data acquision.
+    Device manager must be initialized.
+    """
+    py_error_wrapper(xhptdc8_stop_capture(), "Could not stop capture")
+
+def software_trigger(index: int) -> None:
+    """Generates a software trigger event.
+    """
+    py_error_wrapper(xhptdc8_software_trigger(index), "Could not generate software trigger.")
+
+def get_static_info(index: int) -> None:
+    """Returns static information about the device.
+    """
+    cdef xhptdc8_static_info *static_info
+    py_error_wrapper(xhptdc8_get_static_info(index, static_info), "Could not get static info.")
+
+def close() -> None:
+    """Finalize the driver for this device.
+    """
+    py_error_wrapper(xhptdc8_close(), "Could not close driver")
+
+def start_tiger(index: int) -> None:
+    """Start the timing generator of an individual board. 
+    This can be done independently of the state of the data acquisition."""
+    py_error_wrapper(xhptdc8_start_tiger(index), "Could not start TiGer")
+
+def stop_tiger(index: int) -> None:
+    """Stops the timing generator of an individual board.
+    This can be done independently of the state of the data acquisition."""
+    py_error_wrapper(xhptdc8_stop_tiger(index), "Could not stop TiGer")
 
 cpdef print_device_info():
     cdef xhptdc8_static_info static_info
     xhptdc8_get_static_info(0, &static_info)
     print(f"Board Serial: {static_info.board_serial}")
+
+def count_devices() -> int:
+    """Returns the number of boards present in the system that are supported by the current driver."""
+    cdef int n_devices
+    cdef int error_code
+    cdef char *error_msg = NULL
+    n_devices = xhptdc8_count_devices(&error_code, &error_msg)
+    catch_errs(error_code, error_msg)
+
+    return n_devices
+
+def get_driver_revision() -> int:
+    """ Returns the driver version, same format as static_info.driver_revision. 
+    This function does not require a xHPTDC8_PCIe board to be present."""
+
+    cdef int driver_revision
+    driver_revision = xhptdc8_get_driver_revision()
+    return driver_revision
+
+def get_driver_revision_str() -> str:
+    """ Returns the driver version, including SVN build revision as a string.
+    This function does not require a xHPTDC8_PCIe board to be present."""
+    cdef const char *driver_revision = xhptdc8_get_driver_revision_str()
+
+    return str(driver_revision, encoding="utf-8")
+
+def device_state_to_str(state: int) -> str:
+    """ Returns the device state in string format. """
+    cdef const char *device_state_str = xhptdc8_device_state_to_str(state)
+
+    return str(device_state_str, encoding="utf=8")

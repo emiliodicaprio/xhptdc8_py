@@ -12,3 +12,5 @@ xhptdc8_py/xhptdc8_py
 
 # Virtual environments
 .venv
+xhptdc8_py/xhptdc8_driver_64.dll
+xhptdc8_py/xhptdc8_util.dll

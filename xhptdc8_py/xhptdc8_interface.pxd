@@ -35,6 +35,8 @@ cdef extern from "xhptdc8_interface.h":
 
     cdef int xhptdc8_pause_capture()
 
+    cdef int xhptdc8_continue_capture()
+
     cdef int xhptdc8_stop_capture()
 
     cdef int xhptdc8_software_trigger(int index)
