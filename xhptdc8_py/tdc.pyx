@@ -74,7 +74,9 @@ def software_trigger(index: int) -> None:
     py_error_wrapper(xhptdc8_software_trigger(index), "Could not generate software trigger.")
 
 cdef class Static_info:
-    cdef xhptdc8_static_info *info
+    # cdef xhptdc8_static_info info
+    cdef xhptdc8_static_info info
+
     def __init__(self):
         return
     
@@ -135,11 +137,11 @@ cdef class Static_info:
 def get_static_info(index: int) -> None:
     """Returns static information about the device.
     """
-    cdef xhptdc8_static_info *static_info
+    # cdef xhptdc8_static_info static_info
     cdef Static_info py_static_info = Static_info()
+    cdef xhptdc8_static_info *static_info = &py_static_info.info
     # py_error_wrapper(xhptdc8_get_static_info(index, static_info), "Could not get static info.")
     xhptdc8_get_static_info(index, static_info)
-    py_static_info.info = static_info
     return py_static_info
 
 def close() -> None:
