@@ -172,7 +172,7 @@ cdef class Static_info:
         """Calibration data read from flash is valid.
         
         If not 'False', the driver found valid calibration data in the flash on the board and is using it."""
-        return self.info.flash_valid
+        return self.info.flash_valid == 1
 
 def get_static_info(index: int) -> None:
     """Returns static information about the device.
@@ -323,6 +323,53 @@ def get_temperature_info(index: int):
     py_error_wrapper(xhptdc8_get_temperature_info(index, temp_info), "Could not get temperature info")
     return py_temp_info
 
+cdef class Clock_info:
+    """Contains information about the active clock source.
+
+    Structure is filled by get_clock_info()
+    """
+    cdef xhptdc8_clock_info info
+
+    def __init__(self) -> None:
+        return
+    
+    @property
+    def version(self) -> int:
+        """A version number that is increased when the definition of the structure is changed.
+        """
+        return self.info.version
+    
+    @property
+    def cdce_locked(self) -> bool:
+        """CDCE62005 PLL locked. Set if the jitter cleaning PLL clock synthesizer achieved lock.
+        """
+        return self.info.cdce_locked == 1
+    
+    @property
+    def cdce_version(self) -> int:
+        """Version information from the CDCE62005 clock synthesizer.
+        """
+        return self.info.cdce_version
+    
+    @property
+    def use_ext_clock(self) -> bool:
+        """Source for the clock synthesizer is usually the 10MHz on-board oscillator. If False: 10MHz onboard. If True: LEMO clock.
+        """
+        return self.info.use_ext_clock == 1
+
+    @property
+    def fpga_locked(self) -> bool:
+        """Set if the FPGA datapath PLLs achieved lock.
+        """
+        return self.info.fpga_locked == 1
+
+def get_clock_info(index: int) -> Clock_info:
+    """Get information on clocking configuration and status
+    """
+    cdef Clock_info py_clock_info = Clock_info()
+    cdef xhptdc8_clock_info *clock_info = &py_clock_info
+    py_error_wrapper(xhptdc8_get_clock_info(index, clock_info), "Could not get clock info")
+    return py_clock_info
 
 def close() -> None:
     """Finalize the driver for this device.
