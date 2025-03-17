@@ -73,11 +73,73 @@ def software_trigger(index: int) -> None:
     """
     py_error_wrapper(xhptdc8_software_trigger(index), "Could not generate software trigger.")
 
+cdef class Static_info:
+    cdef xhptdc8_static_info *info
+    def __init__(self):
+        return
+    
+    @property
+    def version(self) -> int:
+        return self.info.version
+    
+    @property
+    def board_id(self) -> int:
+        return self.info.board_id
+    
+    @property
+    def driver_revision(self) -> int:
+        return self.info.board_revision
+    
+    @property
+    def driver_build_revision(self) -> int:
+        return self.info.driver_build_revision
+
+    @property
+    def firmware_revision(self) -> int:
+        return self.info.firmware_revision
+    
+    @property
+    def board_revision(self) -> int:
+        return self.info.board_revision
+    
+    @property
+    def board_configuration(self) -> int:
+        return self.info.board_configuration
+    
+    @property
+    def subversion_revision(self) -> int:
+        return self.info.subversion_revision
+    
+    @property
+    def chip_id(self) -> list:
+        return self.info.chip_id
+
+    @property
+    def board_serial(self) -> int:
+        return self.info.board_serial
+    
+    @property
+    def flash_serial_high(self) -> int:
+        return self.info.flash_serial_high
+
+    @property
+    def flash_serial_low(self) -> int:
+        return self.info.flash_serial_low
+    
+    @property
+    def flash_valid(self) -> bool:
+        return self.info.flash_valid
+    
+
+
 def get_static_info(index: int) -> None:
     """Returns static information about the device.
     """
     cdef xhptdc8_static_info *static_info
+    cdef Static_info py_static_info = Static_info()
     py_error_wrapper(xhptdc8_get_static_info(index, static_info), "Could not get static info.")
+    py_static_info.info = static_info
+    return py_static_info
 
 def close() -> None:
     """Finalize the driver for this device.
