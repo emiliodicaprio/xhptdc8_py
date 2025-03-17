@@ -10,9 +10,9 @@ cdef int py_error_wrapper(int status, const char *message) except -1:
     if status == XHPTDC8_OK:
         return 0
     else:
-        py_message = str(message, encoding="utf-8")
+        py_err_message = str(message, encoding="utf-8")
         py_tdc_message = str(xhptdc8_get_last_error_message(0), encoding="utf-8")
-        raise RuntimeError(f"TDC error: {py_message}: {py_tdc_message}\n")
+        raise RuntimeError(f"TDC error: {py_err_message}: {py_tdc_message}\n")
 
 cdef catch_errs(int status, const char *message):
     if status == XHPTDC8_OK:
@@ -137,7 +137,8 @@ def get_static_info(index: int) -> None:
     """
     cdef xhptdc8_static_info *static_info
     cdef Static_info py_static_info = Static_info()
-    py_error_wrapper(xhptdc8_get_static_info(index, static_info), "Could not get static info.")
+    # py_error_wrapper(xhptdc8_get_static_info(index, static_info), "Could not get static info.")
+    xhptdc8_get_static_info(index, static_info)
     py_static_info.info = static_info
     return py_static_info
 
