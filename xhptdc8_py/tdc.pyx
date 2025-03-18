@@ -4,10 +4,10 @@ from .crono_interface cimport *
 from libc.stdio cimport printf
 from libc.stdlib cimport free
 
-cpdef py_print_error():
-    return
 
 cdef int py_error_wrapper(int status, const char *message) except -1:
+    """Wrapper to catch the error codes thrown by the TDC and passing them on to Python.
+    """
     if status == XHPTDC8_OK:
         return 0
     else:
@@ -15,39 +15,95 @@ cdef int py_error_wrapper(int status, const char *message) except -1:
         py_tdc_message = str(xhptdc8_get_last_error_message(0), encoding="utf-8")
         raise RuntimeError(f"TDC error: {py_err_message}: {py_tdc_message}\n")
 
-cdef catch_errs(int status, const char *message):
-    if status == XHPTDC8_OK:
-        return status
+cdef class Manager_init_parameters:
+    """Struct for initialization of the xHPTDC8 manager. Default parameters are obtained from get_default_init_parameters().
+    """
+    cdef xhptdc8_manager_init_parameters mgr_params
+
+    def __init__(self):
+        return
     
-    printf("TDC ERROR: %s: %s\n", message, xhptdc8_get_last_error_message(0))
-    return
+    @property
+    def version(self) -> int:
+        """Version number of the xhptdc8_manager_init_parameters structure.
+        Must be left unchanged.
+        """
+        return self.mgr_params.version
+    
+    @property
+    def buffer_size(self) -> int:
+        """The minimum size for the DMA buffer. If set to 0, the default size of 16MB is used.
+        """
+        return self.mgr_params.buffer_size
+    
+    @buffer_size.setter
+    def buffer_size(self, buffer_size: int):
+        self.mgr_params.buffer_size = buffer_size
+    
+    @property
+    def variant(self) -> int:
+        """A variant, for reconfiguring the chip for future extension.
+        """
+        return self.mgr_params.variant
+    
+    @property
+    def device_type(self) -> int:
+        """A constant for the different devices of cronologic CRONO_DEVICE_*.
+        Initialized get_default_init_parameters, must be left unchanged.
+        """
+        return self.mgr_params.device_type
+    
+    @property
+    def dma_read_delay(self) -> int:
+        """The update delay of the writing pointer after a packet has been sent over PCIe. Specified in multiples of 16ns. Should not be changed by the user. The base unit is 16 to 32 ns.
+        """
+        return self.mgr_params.dma_read_delay
 
-cpdef get_grouping():
-    cdef xhptdc8_manager_configuration mgr
-    err = xhptdc8_get_current_configuration(&mgr)
+    @property
+    def multiboard(self) -> bool:
+        """Several xHPTDC8-PCIe can be used in sync.
+        If set to True, enable multiboard operation. If set to False, disable multiboard operation.
+        """
+        return self.mgr_params.multiboard == 1
+    
+    @multiboard.setter
+    def multiboard(self, multiboard: bool):
+        self.mgr_params.multiboard = 1 if multiboard else 0
+    
+    @property
+    def use_ext_clock(self) -> bool:
+        """Select external 10 MHz reference. If set to True, use external 10 MHz reference. If set to False, use internal reference.
+        """
+        return self.mgr_params.use_ext_clock == 1
+    
+    @use_ext_clock.setter
+    def use_ext_clock(self, use_ext_clock: bool):
+        self.mgr_params.use_ext_clock = 1 if use_ext_clock else 0
+    
+    @property
+    def ignore_calibration(self) -> bool:
+        """Ignore calibration values read from device flash.
+        """
+        return self.mgr_params.ignore_calibration == 1
+    
+    @ignore_calibration.setter
+    def ignore_calibration(self, ignore_calibration: bool):
+        self.mgr_params.ignore_calibration = 1 if ignore_calibration else 0
 
-    return mgr.grouping.enabled
+def get_default_init_parameters() -> Manager_init_parameters:
+    """Sets up the standard parameters.
+    Gets a set of default parameters to use for init(). This function must always be used to initialize the Manager_init_parameters structure.
+    """
+    cdef Manager_init_parameters py_mgr_init = Manager_init_parameters()
+    cdef xhptdc8_manager_init_parameters *mgr_init = &py_mgr_init.mgr_params
+    py_error_wrapper(xhptdc8_get_default_init_parameters(mgr_init), "Could not get default manager init parameters.")
+    return py_mgr_init
 
-def initialize_tdc(int buffer_size) -> None:
-    cdef xhptdc8_manager_init_parameters params
-    xhptdc8_get_default_init_parameters(&params)
-    params.buffer_size = buffer_size
-
-    cdef int error_code
-    cdef char *error_msg = NULL
-    error_code = xhptdc8_init(&params)
-    catch_errs(error_code, error_msg)
-    return error_code
-
-cpdef get_default_configuration():
-    cdef xhptdc8_manager_configuration default_manager
-
-    error_message = xhptdc8_get_default_configuration(&default_manager)
-
-    if error_message == 0:
-        print("Heuj")
-
-    return default_manager.grouping.enabled
+def init_xhptdc8(manager_init_parameters: Manager_init_parameters) -> None:
+    """Opens and initializes all xHPTDC8-PCIe boards.
+    """
+    cdef xhptdc8_manager_init_parameters *params = &manager_init_parameters.mgr_params
+    py_error_wrapper(xhptdc8_init(params), "Could not initialize xHPTDC8 manager.")
 
 def start_capture() -> None:
     """Start data acquisition.
@@ -397,23 +453,18 @@ def stop_tiger(index: int) -> None:
     This can be done independently of the state of the data acquisition."""
     py_error_wrapper(xhptdc8_stop_tiger(index), "Could not stop TiGer")
 
-cpdef print_device_info():
-    cdef xhptdc8_static_info static_info
-    xhptdc8_get_static_info(0, &static_info)
-    print(f"Board Serial: {static_info.board_serial}")
-
 def count_devices() -> int:
     """Returns the number of boards present in the system that are supported by the current driver."""
     cdef int n_devices
     cdef int error_code
     cdef char *error_msg = NULL
     n_devices = xhptdc8_count_devices(&error_code, &error_msg)
-    catch_errs(error_code, error_msg)
+    py_error_wrapper(error_code, error_msg)
 
     return n_devices
 
 def get_driver_revision() -> int:
-    """ Returns the driver version, same format as static_info.driver_revision. 
+    """Returns the driver version, same format as static_info.driver_revision. 
     This function does not require a xHPTDC8_PCIe board to be present."""
 
     cdef int driver_revision
@@ -421,14 +472,14 @@ def get_driver_revision() -> int:
     return driver_revision
 
 def get_driver_revision_str() -> str:
-    """ Returns the driver version, including SVN build revision as a string.
+    """Returns the driver version, including SVN build revision as a string.
     This function does not require a xHPTDC8_PCIe board to be present."""
     cdef const char *driver_revision = xhptdc8_get_driver_revision_str()
 
     return str(driver_revision, encoding="utf-8")
 
 def device_state_to_str(state: int) -> str:
-    """ Returns the device state in string format. """
+    """Returns the device state in string format. """
     cdef const char *device_state_str = xhptdc8_device_state_to_str(state)
 
     return str(device_state_str, encoding="utf=8")
