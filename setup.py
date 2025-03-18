@@ -8,10 +8,7 @@ DUMMY = True
 
 tdc_driver_include = "xhptdc8_babel/include"
 
-if DUMMY:
-    tdc_driver_lib_dir = "xhptdc8_babel/lib/dummy"
-else:
-    tdc_driver_lib_dir = "xhptdc8_babel/lib"
+tdc_driver_lib_dir = "xhptdc8_babel/lib/dummy" if DUMMY else "xhptdc8_babel/lib"
 
 extensions = [
     Extension(

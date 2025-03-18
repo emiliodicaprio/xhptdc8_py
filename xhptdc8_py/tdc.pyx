@@ -28,7 +28,7 @@ cpdef get_grouping():
 
     return mgr.grouping.enabled
 
-cpdef initialize_tdc(int buffer_size):
+def initialize_tdc(int buffer_size) -> None:
     cdef xhptdc8_manager_init_parameters params
     xhptdc8_get_default_init_parameters(&params)
     params.buffer_size = buffer_size
@@ -302,7 +302,7 @@ cdef class Temperature_info:
     """
     cdef xhptdc8_temperature_info info
 
-    def __init__():
+    def __init__(self):
         return
     
     @property
@@ -367,9 +367,20 @@ def get_clock_info(index: int) -> Clock_info:
     """Get information on clocking configuration and status
     """
     cdef Clock_info py_clock_info = Clock_info()
-    cdef xhptdc8_clock_info *clock_info = &py_clock_info
+    cdef xhptdc8_clock_info *clock_info = &py_clock_info.info
     py_error_wrapper(xhptdc8_get_clock_info(index, clock_info), "Could not get clock info")
     return py_clock_info
+
+def get_last_error_message(index: int) -> str:
+    """Returns the most recent error message.
+    """
+    cdef const char *error_msg = xhptdc8_get_last_error_message(index)
+    return str(error_msg, encoding="utf-8")
+
+def get_device_type(index: int) -> int:
+    """Returns the type of the device as CRONO_DEVICE_XHPTDC8
+    """
+    return xhptdc8_get_device_type(index)
 
 def close() -> None:
     """Finalize the driver for this device.
