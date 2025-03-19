@@ -67,7 +67,7 @@ cdef class Manager_init_parameters:
         return self.mgr_params.multiboard == 1
     
     @multiboard.setter
-    def multiboard(self, multiboard: bool):
+    def multiboard(self, multiboard: bool) -> None:
         self.mgr_params.multiboard = 1 if multiboard else 0
     
     @property
@@ -77,7 +77,7 @@ cdef class Manager_init_parameters:
         return self.mgr_params.use_ext_clock == 1
     
     @use_ext_clock.setter
-    def use_ext_clock(self, use_ext_clock: bool):
+    def use_ext_clock(self, use_ext_clock: bool) -> None:
         self.mgr_params.use_ext_clock = 1 if use_ext_clock else 0
     
     @property
@@ -87,7 +87,7 @@ cdef class Manager_init_parameters:
         return self.mgr_params.ignore_calibration == 1
     
     @ignore_calibration.setter
-    def ignore_calibration(self, ignore_calibration: bool):
+    def ignore_calibration(self, ignore_calibration: bool) -> None:
         self.mgr_params.ignore_calibration = 1 if ignore_calibration else 0
 
 def get_default_init_parameters() -> Manager_init_parameters:
