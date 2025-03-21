@@ -4,7 +4,6 @@ from .crono_interface cimport *
 from libc.stdio cimport printf
 from libc.stdlib cimport free
 
-
 cdef int py_error_wrapper(int status, const char *message) except -1:
     """Wrapper to catch the error codes thrown by the TDC and passing them on to Python.
     """
@@ -14,6 +13,12 @@ cdef int py_error_wrapper(int status, const char *message) except -1:
         py_err_message = str(message, encoding="utf-8")
         py_tdc_message = str(xhptdc8_get_last_error_message(0), encoding="utf-8")
         raise RuntimeError(f"TDC error: {py_err_message}: {py_tdc_message}\n")
+
+
+cdef class TDC_hit:
+    """Struct containing a single TDC hit.
+    """
+
 
 cdef class Manager_init_parameters:
     """Struct for initialization of the xHPTDC8 manager. Default parameters are obtained from get_default_init_parameters().
