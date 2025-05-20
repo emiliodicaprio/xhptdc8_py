@@ -1,7 +1,7 @@
 include xhptdc8_py/*.pyx
 include xhptdc8_py/*.pxd
 include xhptdc8_py/*.pyi
-include xhptdc8_babel/bin/xhptdc8_driver_64.dll
-include xhptdc8_babel/bin/xhptdc8_util.dll
-include xhptdc8_babel/lib/*.*
-include xhptdc8_babel/include/*.*
+include xhptdc8_py/xhptdc8_babel/bin/xhptdc8_driver_64.dll
+include xhptdc8_py/xhptdc8_babel/bin/xhptdc8_util.dll
+include xhptdc8_py/xhptdc8_babel/lib/*.*
+include xhptdc8_py/xhptdc8_babel/include/*.*

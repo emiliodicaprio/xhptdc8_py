@@ -6,9 +6,11 @@ import os
 
 DUMMY = False
 
-tdc_driver_include = "xhptdc8_babel/include"
+tdc_driver_include = "xhptdc8_py/xhptdc8_babel/include"
 
-tdc_driver_lib_dir = "xhptdc8_babel/lib/dummy" if DUMMY else "xhptdc8_babel/lib"
+tdc_driver_lib_dir = (
+    "xhptdc8_py/xhptdc8_babel/lib/dummy" if DUMMY else "xhptdc8_py/xhptdc8_babel/lib"
+)
 
 extensions = [
     Extension(
@@ -24,7 +26,7 @@ extensions = [
         include_dirs=[
             tdc_driver_include,
             "xhptdc8_py",
-            "xhptdc8_babel/util/util/src/ryml_src",
+            "xhptdc8_py/xhptdc8_babel/util/util/src/ryml_src",
         ],
         libraries=["xhptdc8_driver_64", "xhptdc8_util"],
         library_dirs=[tdc_driver_lib_dir],
@@ -47,9 +49,9 @@ setup(
     package_dir={"xhptdc8_py": "xhptdc8_py"},
     package_data={
         # "xhptdc8_py": ["tdc.pyi", "xhptdc8_babel/lib/xhptdc8_driver_64.dll"],
-        "": [
-            "xhptdc8_babel/lib/xhptdc8_driver_64.dll",
-            "xhptdc8_babel/lib/xhptdc8_util.dll",
+        "xhptdc8_py": [
+            "xhptdc8_py/xhptdc8_babel/lib/xhptdc8_driver_64.dll",
+            "xhptdc8_py/xhptdc8_babel/lib/xhptdc8_util.dll",
         ],
     },
     # data_files=[
