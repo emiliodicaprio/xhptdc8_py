@@ -1,6 +1,7 @@
-include src/*.pyx
-include src/*.pxd
-include src/*.pxi
+include xhptdc8_py/*.pyx
+include xhptdc8_py/*.pxd
+include xhptdc8_py/*.pxi
 include xhptdc8_babel/bin/*.*
 include xhptdc8_babel/lib/*.*
+include xhptdc8_babel/lib/dummy/*.*
 include xhptdc8_babel/include/*.*
