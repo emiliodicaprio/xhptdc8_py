@@ -48,7 +48,7 @@ setup(
     package_data={"xhptdc8_py": ["tdc.pyi"]},
     data_files=[
         (
-            ".",
+            "",
             [
                 "xhptdc8_babel/lib/dummy/xhptdc8_driver_64.dll",
                 "xhptdc8_babel/lib/dummy/xhptdc8_util.dll",
