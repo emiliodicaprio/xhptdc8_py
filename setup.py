@@ -4,7 +4,7 @@ from Cython.Distutils import build_ext
 import shutil
 import os
 
-DUMMY = True
+DUMMY = False
 
 tdc_driver_include = "xhptdc8_babel/include"
 
@@ -46,10 +46,10 @@ setup(
     ext_modules=cythonize(extensions, include_path=["xhptdc8_py"], build_dir="build"),
     package_dir={"xhptdc8_py": "xhptdc8_py"},
     package_data={
-        "xhptdc8_py": ["tdc.pyi"],
+        # "xhptdc8_py": ["tdc.pyi", "xhptdc8_babel/lib/xhptdc8_driver_64.dll"],
         "": [
-            "xhptdc8_babel/lib/dummy/xhptdc8_driver_64.dll",
-            "xhptdc8_babel/lib/dummy/xhptdc8_util.dll",
+            "xhptdc8_babel/lib/xhptdc8_driver_64.dll",
+            "xhptdc8_babel/lib/xhptdc8_util.dll",
         ],
     },
     # data_files=[
@@ -61,7 +61,7 @@ setup(
     #         ],
     #     )
     # ],
-    include_dirs=["xhptdc8_py", "./lib"],
+    include_dirs=["xhptdc8_py"],
     cmdclass={"build_ext": build_ext},
     zip_safe=False,
     include_package_data=True,
