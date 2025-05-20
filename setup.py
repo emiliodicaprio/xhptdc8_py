@@ -45,13 +45,16 @@ setup(
     name="xhptdc8_py",
     ext_modules=cythonize(extensions, include_path=["xhptdc8_py"], build_dir="build"),
     package_dir={"xhptdc8_py": "xhptdc8_py"},
-    package_data={
-        "xhptdc8_py": [
-            "tdc.pyi",
-            "xhptdc8_babel/lib/dummy/xhptdc8_driver_64.dll",
-            "xhptdc8_babel/lib/dummy/xhptdc8_util.dll",
-        ]
-    },
+    package_data={"xhptdc8_py": ["tdc.pyi"]},
+    data_files=[
+        (
+            ".",
+            [
+                "xhptdc8_babel/lib/dummy/xhptdc8_driver_64.dll",
+                "xhptdc8_babel/lib/dummy/xhptdc8_util.dll",
+            ],
+        )
+    ],
     include_dirs=["xhptdc8_py", "./lib"],
     cmdclass={"build_ext": build_ext},
     zip_safe=False,
