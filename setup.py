@@ -49,7 +49,7 @@ setup(
     package_dir={"xhptdc8_py": "xhptdc8_py"},
     package_data={
         # "xhptdc8_py": ["tdc.pyi", "xhptdc8_babel/lib/xhptdc8_driver_64.dll"],
-        "xhptdc8_py": [
+        "": [
             "xhptdc8_py/xhptdc8_babel/lib/xhptdc8_driver_64.dll",
             "xhptdc8_py/xhptdc8_babel/lib/xhptdc8_util.dll",
         ],
